@@ -102,6 +102,7 @@ export class SidebarContext implements ViewContext {
         }
         this._renderRoot = null;
 
+        this._store.destroy();
         this._epic.destroy();
         this._repo.destroy();
     }

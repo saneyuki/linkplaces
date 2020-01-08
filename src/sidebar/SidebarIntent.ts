@@ -1,3 +1,4 @@
+import { IterableX } from '@reactivex/ix-esnext-esm/iterable/iterablex';
 import { Observable, Subject } from 'rxjs';
 import { filter as filterRx } from 'rxjs/operators';
 
@@ -5,6 +6,8 @@ import { Dispatchable } from '../shared/Intent';
 import {
     WhereToOpenItem,
 } from '../shared/RemoteAction';
+
+import { SidebarItemViewModelEntity } from './SidebarDomain';
 
 export class SidebarIntent implements Dispatchable<Action> {
 
@@ -41,11 +44,12 @@ export class SidebarIntent implements Dispatchable<Action> {
 
 export const enum ActionType {
     OpenItem = 'SIDEBAR_ACTION_ITEM_OPEND',
-    SelectItem = 'SIDEBAR_ACTION_SELECT_ITEM'
+    SelectItem = 'SIDEBAR_ACTION_SELECT_ITEM',
+    UpdateEntries = 'SIDEBAR_ACTION_UPDATE_ENTRIES',
 }
 
 export type Action =
-    OpenItemAction | SelectItemAction;
+    OpenItemAction | SelectItemAction | UpdateEntriesAction;
 
 interface ActionBase {
     type: ActionType;
@@ -83,3 +87,16 @@ export function notifySelectItemAction(id: string): SelectItemAction {
     };
 }
 
+export interface UpdateEntriesAction extends ActionBase {
+    type: ActionType.UpdateEntries;
+    list: IterableX<SidebarItemViewModelEntity>;
+}
+export function isUpdateEntriesAction(v: Readonly<ActionBase>): v is UpdateEntriesAction {
+    return v.type === ActionType.UpdateEntries;
+}
+export function notifyUpdateEntries(list: IterableX<SidebarItemViewModelEntity>): UpdateEntriesAction {
+    return {
+        type: ActionType.UpdateEntries,
+        list,
+    };
+}
