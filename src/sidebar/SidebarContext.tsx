@@ -8,11 +8,7 @@ import ReactDOM from 'react-dom';
 
 import {
     Subscription,
-    animationFrameScheduler as animationFrameRxScheduler,
 } from 'rxjs';
-import {
-    debounceTime,
-} from 'rxjs/operators';
 
 import { BookmarkTreeNode } from '../../typings/webext/bookmarks';
 
@@ -25,7 +21,6 @@ import { SidebarViewEpic } from './SidebarEpic';
 import { SidebarIntent } from './SidebarIntent';
 import { RemoteActionChannel } from './SidebarMessageChannel';
 import { SidebarRepository } from './SidebarRepository';
-import { SidebarState } from './SidebarState';
 import { SidebarStore } from './SidebarStore';
 import { SidebarView } from './SidebarView';
 
@@ -58,7 +53,8 @@ export class SidebarContext implements ViewContext {
         }
 
         this._epic.activate();
-        const state = this._store.compose({
+
+        const store = this._store.composeToRedux({
             list: this._list.map(mapToSidebarItemEntity),
         });
 
@@ -66,12 +62,11 @@ export class SidebarContext implements ViewContext {
             this._renderRoot = ReactDOM.createRoot(mountpoint);
         }
 
-        this._subscription = state
-            .pipe(
-                // XXX: Should we remove this wrapping `requestAnimationFrame()` for React concurrent mode?
-                // Will React schedule requestAnimationFrame properly?
-                debounceTime(0, animationFrameRxScheduler),
-            ).subscribe((state: Readonly<SidebarState>) => {
+        const render = () => {
+            // XXX: Should we remove this wrapping `requestAnimationFrame()` for React concurrent mode?
+            // Will React schedule requestAnimationFrame properly?
+            window.requestAnimationFrame(() => {
+                const { reduceSidebarState: state, } = store.getState();
                 const view = (
                     <React.StrictMode>
                         <SidebarView state={state} intent={this._intent} />
@@ -84,9 +79,14 @@ export class SidebarContext implements ViewContext {
                 } else {
                     ReactDOM.render(view, mountpoint);
                 }
-            }, (e) => {
-                console.exception(e);
             });
+        };
+
+        const reduxSubscription = store.subscribe(render);
+        this._subscription = new Subscription(reduxSubscription);
+
+        // ignite the first rendering
+        render();
     }
 
     async onDestroy(_mountpoint: Element): Promise<void> {
