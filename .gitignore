@@ -10,3 +10,13 @@ npm-debug.log
 
 # yarn
 yarn-error.log
+
+# https://yarnpkg.com/advanced/qa/#which-files-should-be-gitignored
+.yarn/*
+# We don't use zero-installs ttps://yarnpkg.com/features/zero-installs
+#!.yarn/cache
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
