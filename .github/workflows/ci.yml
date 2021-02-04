@@ -26,7 +26,7 @@ jobs:
         # thus we need to do `yarn install` to restore `node_modules/` so we need run always this step.
         # if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: |
-          yarn install --frozen-lockfile
+          yarn install --immutable
       ##### END: sharable parts across jobs #####
 
   build:
@@ -53,7 +53,7 @@ jobs:
         # thus we need to do `yarn install` to restore `node_modules/` so we need run always this step.
         # if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: |
-          yarn install --frozen-lockfile
+          yarn install --immutable
       ##### END: sharable parts across jobs #####
 
       - name: build
@@ -86,7 +86,7 @@ jobs:
         # thus we need to do `yarn install` to restore `node_modules/` so we need run always this step.
         # if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: |
-          yarn install --frozen-lockfile
+          yarn install --immutable
       ##### END: sharable parts across jobs #####
 
       - name: build
@@ -118,7 +118,7 @@ jobs:
         # thus we need to do `yarn install` to restore `node_modules/` so we need run always this step.
         # if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: |
-          yarn install --frozen-lockfile
+          yarn install --immutable
       ##### END: sharable parts across jobs #####
 
       - name: check formatting
@@ -150,7 +150,7 @@ jobs:
         # thus we need to do `yarn install` to restore `node_modules/` so we need run always this step.
         # if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: |
-          yarn install --frozen-lockfile
+          yarn install --immutable
       ##### END: sharable parts across jobs #####
 
       - name: test
